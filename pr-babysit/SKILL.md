@@ -159,6 +159,43 @@ For each new comment or review, tell the user:
 **Do not auto-fix review comments** — only report them with your assessment.
 Wait for the user to approve before making changes based on review feedback.
 
+### Responding to review comments
+
+When a fix for a review comment has already been pushed (either as part of a
+code-defect fix or a prior user-approved change):
+
+1. **Reply** to the review comment thread explaining what was done.
+2. **Resolve** the conversation thread via the GraphQL API:
+
+   ```bash
+   gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "<THREAD_ID>"}) { thread { isResolved } } }'
+   ```
+
+3. To get thread IDs, query the PR's review threads:
+
+   ```bash
+   gh api graphql -f query='query {
+     repository(owner: "<owner>", name: "<repo>") {
+       pullRequest(number: <number>) {
+         reviewThreads(first: 50) {
+           nodes { id isResolved comments(first: 1) { nodes { body author { login } } } }
+         }
+       }
+     }
+   }'
+   ```
+
+When a review comment is intentionally **not** addressed (e.g. disagreed with
+the suggestion), reply explaining why but do **not** resolve the thread — leave
+it for the reviewer.
+
+### Tracking seen reviews
+
+Track **review IDs** (not just timestamps) across ticks to avoid missing or
+re-reporting reviews. When a new review appears (ID not in the seen set),
+process all its comments. The cron prompt must carry the set of seen review
+IDs forward between ticks.
+
 ## 6. Retry ledger (CI jobs)
 
 Maintain an in-memory mapping of `job-name -> retried: bool` across ticks.
