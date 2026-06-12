@@ -46,3 +46,9 @@ The user provides a relative file path as the argument. If no argument is given,
        ]
      }'
    ```
+6. Share the document with Red Hat (view access):
+   ```
+   gws drive permissions create \
+     --params '{"fileId": "<ID>"}' \
+     --json '{"role": "reader", "type": "domain", "domain": "redhat.com", "allowFileDiscovery": false}'
+   ```
