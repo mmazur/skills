@@ -16,7 +16,8 @@ The user provides a relative file path as the argument. If no argument is given,
 ## Steps
 
 1. Verify the file exists.
-2. Run:
+2. Choose a good document title: use the first `# heading` in the Markdown if one exists; if there is no heading, infer a title from the opening content of the document; as a last resort, derive a human-friendly title from the filename (strip extension, replace hyphens/underscores with spaces, title-case). Use this as `<FILENAME>` below.
+3. Run:
    ```
    gws drive files create \
      --upload <FILE_PATH> \
