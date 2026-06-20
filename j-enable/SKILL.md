@@ -35,6 +35,17 @@ jira issue create -p AROSLSRE -t Task -s "Summary" -b "$DESC" ...
 **Gotcha:** `\n` inside a quoted `-b "..."` literal is passed as the two
 characters `\` and `n`, not a newline. Use a heredoc'd variable as above.
 
+**Gotcha (background hang):** `jira` reads stdin even with `--no-input`, so
+any write command (`create`, `edit`, `link`, `move`) run in the background — or
+in a non-interactive context — hangs forever waiting on stdin. Always redirect
+`</dev/null` for these. Don't run write commands as background tasks; run them
+in the foreground (optionally wrapped in `timeout 60`).
+
+```bash
+jira issue create -p AROSLSRE -t Bug -s "Summary" -y Major -C aro-hcp-observability \
+  -l observability -P AROSLSRE-800 -a "mmazur@redhat.com" -b "$DESC" --no-input </dev/null
+```
+
 ## Issue hygiene (required on every issue)
 
 Every created/edited issue MUST have all of:
@@ -210,6 +221,20 @@ Create a task under an epic:
 ```bash
 jira issue create -p AROSLSRE -P AROSLSRE-456 -t Task -s "Task summary" -b "Task description"
 ```
+
+## Linking issues (related / blocks / etc.)
+
+```bash
+jira issue link <inward-key> <outward-key> "<Link-Type>" </dev/null
+# e.g. mark AROSLSRE-1237 as related to ARO-25100:
+jira issue link AROSLSRE-1237 ARO-25100 "Related" </dev/null
+```
+
+**Gotcha:** the link type is `Related` — NOT `Relates` (which errors).
+Valid types: `Account`, `Blocks`, `Causality`, `Cloners`, `Depend`,
+`Discovery - Connected`, `Document`, `Duplicate`, `Incorporates`, `Informs`,
+`Issue split`, `Related`, `Triggers`, `Work item split` (plus Polaris ones).
+Links work cross-project (e.g. AROSLSRE ↔ ARO).
 
 ## Current user
 
