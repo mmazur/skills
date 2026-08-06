@@ -3,6 +3,7 @@
   "skills": [
     "./aro-hcp-slc-current-sprint",
     "./copy-slack",
+    "./gdoc-read",
     "./gdoc-upload",
     "./gsheet-upload",
     "./j-enable",
