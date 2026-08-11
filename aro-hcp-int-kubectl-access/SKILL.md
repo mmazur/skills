@@ -14,4 +14,5 @@ Notes:
 - Always start the invocation with a subcommand (`kubectl get …`). Any switches before the subcommand (e.g. `kubectl --kubeconfig …`) will be refused.
 - If the kubeconfigs seem stale or are missing, tell the user to (re)login.
 - Kubectl tells of current state, for how it go to that state you should look to kusto.
+- Do not check for the presence of the `int/*.kubeconfig` files. They are not visible to you.
 
