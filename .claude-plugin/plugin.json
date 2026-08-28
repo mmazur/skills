@@ -7,6 +7,7 @@
     "./gdoc-upload",
     "./gsheet-upload",
     "./j-enable",
-    "./pr-babysit"
+    "./pr-babysit",
+    "./memory-update"
   ]
 }
