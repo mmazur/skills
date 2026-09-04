@@ -13,6 +13,17 @@ How to use RedHat's Jira using the `jira` cli command.
 
 Default to **AROSLSRE** for all new cards unless told otherwise.
 
+## Default Team field
+
+For every new AROSLSRE card, set Team (`customfield_10001`) to **ARO HCP -
+Service Lifecycle - All** (`d291274f-507d-4813-92a5-24cbd9c8bc64`) unless the
+user explicitly requests a different team. Pass the UUID, rather than the
+display name, through the CLI custom-field flag:
+
+```bash
+--custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
+```
+
 ## Piping
 
 Prefer pipes over temp files. If a piped `jira` command appears to produce no
@@ -29,7 +40,8 @@ Line 1
 Line 2
 EOF
 )
-jira issue create -p AROSLSRE -t Task -s "Summary" -b "$DESC" ...
+jira issue create -p AROSLSRE -t Task -s "Summary" -b "$DESC" \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64" ...
 ```
 
 **Gotcha:** `\n` inside a quoted `-b "..."` literal is passed as the two
@@ -43,7 +55,8 @@ in the foreground (optionally wrapped in `timeout 60`).
 
 ```bash
 jira issue create -p AROSLSRE -t Bug -s "Summary" -y Major -C aro-hcp-observability \
-  -l observability -P AROSLSRE-800 -a "mmazur@redhat.com" -b "$DESC" --no-input </dev/null
+  -l observability -P AROSLSRE-800 -a "mmazur@redhat.com" -b "$DESC" \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64" --no-input </dev/null
 ```
 
 ## Issue hygiene (required on every issue)
@@ -96,7 +109,8 @@ required for sub-tasks, and points to the parent Story/Task, not an epic):
 ```bash
 jira issue create -p AROSLSRE -t Sub-task -P AROSLSRE-961 \
   -s "Subtask summary" -y Normal -C aro-hcp-observability -l observability \
-  -a "mmazur@redhat.com" -b "Description"
+  -a "mmazur@redhat.com" -b "Description" \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 ```
 
 **Resolving an assignee:** if the user gives a partial name (e.g.
@@ -144,7 +158,8 @@ all required by hygiene rules above):
 
 ```bash
 jira issue create -p AROSLSRE -t <type> -s "<summary>" -b "<description>" \
-  -y Normal -C <component> -l <label> -P AROSLSRE-<epic>
+  -y Normal -C <component> -l <label> -P AROSLSRE-<epic> \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 ```
 
 Types: `Bug`, `Task`, `Story`, `Epic`.
@@ -155,17 +170,18 @@ Examples:
 # Bug — explicit priority, component, label, parent epic
 jira issue create -p AROSLSRE -t Bug -s "Fix login issue" \
   -y Major -C aro-hcp-oncall -l oncall -P AROSLSRE-456 \
-  -b "Description"
+  -b "Description" --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 
 # Task under a Story's parent epic
 jira issue create -p AROSLSRE -t Task -s "Update onboarding doc" \
   -y Normal -C aro-hcp-docs -l docs -P AROSLSRE-456 \
-  -b "Update the README"
+  -b "Update the README" --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 
 # Story with assignee
 jira issue create -p AROSLSRE -t Story -s "User can reset password" \
   -y Normal -C aro-hcp-tooling -l auth -P AROSLSRE-456 \
-  -a "username" -b "As a user..."
+  -a "username" -b "As a user..." \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 
 # Multiline body via heredoc'd variable
 DESC=$(cat <<'EOF'
@@ -174,7 +190,8 @@ spanning multiple lines
 EOF
 )
 jira issue create -p AROSLSRE -t Task -s "Summary" \
-  -y Normal -C aro-hcp-tooling -l tooling -P AROSLSRE-456 -b "$DESC"
+  -y Normal -C aro-hcp-tooling -l tooling -P AROSLSRE-456 -b "$DESC" \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 ```
 
 ### Useful flags
@@ -184,6 +201,7 @@ jira issue create -p AROSLSRE -t Task -s "Summary" \
 - `-l/--label` (repeatable — required)
 - `-P/--parent` (parent epic — required for Story/Task/Bug)
 - `-a/--assignee` (username, email, or display name)
+- `--custom "customfield_10001=<team-id>"` (Team; default ID above)
 - `--web` to open in browser after creation
 
 **Tables in descriptions/comments:** Jira renders wiki-markup tables. Use
@@ -204,7 +222,8 @@ Epics need a custom `epic-name` field equal to the summary:
 
 ```bash
 jira issue create -p AROSLSRE -t Epic -s "Velero image updating" \
-  -b "Epic description" --custom "epic-name=Velero image updating"
+  -b "Epic description" --custom "epic-name=Velero image updating" \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 ```
 
 Link an existing task to an epic (or reparent at any hierarchy level — `-P`
@@ -219,7 +238,8 @@ jira issue edit AROSLSRE-123 --custom "epic-link=AROSLSRE-456" --no-input
 Create a task under an epic:
 
 ```bash
-jira issue create -p AROSLSRE -P AROSLSRE-456 -t Task -s "Task summary" -b "Task description"
+jira issue create -p AROSLSRE -P AROSLSRE-456 -t Task -s "Task summary" -b "Task description" \
+  --custom "customfield_10001=d291274f-507d-4813-92a5-24cbd9c8bc64"
 ```
 
 ## Linking issues (related / blocks / etc.)
@@ -299,7 +319,8 @@ When the user says "add my active card" (or similar), create a card with:
 2. Assignee: current user (from `jira me`)
 3. Sprint: current active SL sprint
 4. Status: moved to "In Progress" after creation
-5. Remember to also pick a component and priority.
+5. Team: ARO HCP - Service Lifecycle - All (`customfield_10001` default above)
+6. Remember to also pick a component and priority.
 
 ## Searching for "my" / team issues
 
