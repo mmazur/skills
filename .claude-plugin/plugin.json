@@ -1,13 +1,3 @@
 {
-  "name": "mmazur-skills",
-  "skills": [
-    "./aro-hcp-slc-current-sprint",
-    "./copy-slack",
-    "./gdoc-read",
-    "./gdoc-upload",
-    "./gsheet-upload",
-    "./j-enable",
-    "./pr-babysit",
-    "./memory-update"
-  ]
+  "name": "mmazur-skills"
 }
