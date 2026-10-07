@@ -5,8 +5,9 @@ description: How to access the integration service and management clusters using
 
 You can kubectl-access int svc and mgmt clusters using like this:
 ```
-kubectl get pods --kubeconfig int/int-uksouth-mgmt-1.kubeconfig
-kubectl get pods --kubeconfig int/int-uksouth-svc-1.kubeconfig
+kubectl get pods --kubeconfig int/int-westus3-mgmt-1.kubeconfig
+kubectl get pods --kubeconfig int/int-westus3-mgmt-2.kubeconfig
+kubectl get pods --kubeconfig int/int-westus3-svc-1.kubeconfig
 ```
 
 Notes:
